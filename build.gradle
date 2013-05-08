@@ -1,7 +1,64 @@
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
+//To install the built library Jar locally in the '.m2' directory (use 'mavenLocal()' repository to retrieve in your build scripts)
+apply plugin: "maven"
+
+//For maven plugin
+group='com.readytalk'
+version='0.1.0'
+
+//For upload to a Sonatype Nexus instance (see nexus and modifyPom closures)
+apply plugin: 'nexus'
+
 dependencies {
     compile gradleApi()
     groovy localGroovy()
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
+    }
+}
+
+nexus {
+    sign = true
+    repositoryUrl = 'http://localhost:8081/nexus/content/repositories/internal/'
+    snapshotRepositoryUrl = 'http://localhost:8081/nexus/content/repositories/internal-snapshots/'
+}
+
+modifyPom {
+    project {
+        name 'Gradle Avian plugin'
+        description 'Gradle plugin that provides tasks for integrating and compiling Avian-JVM-based applications.'
+        url 'https://github.com/ReadyTalk/gradle-avian-plugin'
+        inceptionYear '2012'
+
+        scm {
+            url 'https://github.com/ReadyTalk/gradle-avian-plugin'
+            connection 'scm:https://github.com/ReadyTalk/gradle-avian-plugin.git'
+            developerConnection 'scm:git://github.com/ReadyTalk/gradle-avian-plugin.git'
+        }
+
+        licenses {
+            license {
+                name 'Public Domain'
+                url ''
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'jtdowdall'
+                name 'Jeremy Dowdall'
+                email 'jeremyd@aspencloud.com'
+            }
+        }
+    }
 }
